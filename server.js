@@ -1,41 +1,40 @@
-const express = require("express");
-const colors = require("colors");
-const moragan = require("morgan");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-const path = require("path");
-
-//dotenv conig
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const dotenv = require('dotenv');
 dotenv.config();
 
-//mongodb connection
-connectDB();
-
-//rest obejct
 const app = express();
 
-//middlewares
-app.use(express.json());
-app.use(moragan("dev"));
+// Set up CORS to allow requests from http://localhost:3000
+app.use(cors({
+  origin: '*', // Allow requests from any origin
+  credentials: true, // Include this if you're sending cookies or credentials.
+}));
 
-//routes
-app.use("/api/v1/user", require("./routes/userRoutes"));
-app.use("/api/v1/admin", require("./routes/adminRoutes"));
-app.use("/api/v1/doctor", require("./routes/doctorRoutes"));
+const port = process.env.PORT || 3000;
 
-//static files
-app.use(express.static(path.join(__dirname, "./client/build")));
-
-app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-//port
-const port = process.env.PORT || 8080;
-//listen port
+app.use(express.json());
+
+// Rutas de autenticación
+const authRoutes = require('./routes/authRoutes');
+app.use('/auth', authRoutes);
+
+// Rutas de roles
+const roleRoutes = require('./routes/roleRoutes');
+app.use('/roles', roleRoutes);
+
+// Rutas de usuarios
+const userRoutes = require('./routes/userRoutes');
+app.use('/users', userRoutes);
+const PacieteRoutes = require('./routes/pacienteRoutes');
+app.use('/paciente', PacieteRoutes);
+
 app.listen(port, () => {
-  console.log(
-    `Server Running in ${process.env.NODE_MODE} Mode on port ${process.env.PORT}`
-      .bgCyan.white
-  );
+  console.log(`Servidor en funcionamiento en el puerto ${port}`);
 });

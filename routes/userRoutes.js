@@ -1,61 +1,22 @@
-const express = require("express");
-const {
-  loginController,
-  registerController,
-  authController,
-  applyDoctorController,
-  getAllNotificationController,
-  deleteAllNotificationController,
-  getAllDocotrsController,
-  bookeAppointmnetController,
-  bookingAvailabilityController,
-  userAppointmentsController,
-} = require("../controllers/userCtrl");
-const authMiddleware = require("../middlewares/authMiddleware");
-
-//router onject
+const express = require('express');
+const userController = require('../controllers/userController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const userMiddlerware = require('../middlewares/usermiddlerware');
+const UserController = require('../controllers/userController');
 const router = express.Router();
 
-//routes
-//LOGIN || POST
-router.post("/login", loginController);
 
-//REGISTER || POST
-router.post("/register", registerController);
+// Middleware de autenticación JWT para rutas de usuarios getDoctorUsers
+//router.use(authMiddleware);
 
-//Auth || POST
-router.post("/getUserData", authMiddleware, authController);
+// Rutas para CRUD de usuarios
 
-//APply Doctor || POST
-router.post("/apply-doctor", authMiddleware, applyDoctorController);
+router.get('/listar', UserController.listUsers);
 
-//Notifiaction  Doctor || POST
-router.post(
-  "/get-all-notification",
-  authMiddleware,
-  getAllNotificationController
-);
-//Notifiaction  Doctor || POST
-router.post(
-  "/delete-all-notification",
-  authMiddleware,
-  deleteAllNotificationController
-);
-
-//GET ALL DOC
-router.get("/getAllDoctors", authMiddleware, getAllDocotrsController);
-
-//BOOK APPOINTMENT
-router.post("/book-appointment", authMiddleware, bookeAppointmnetController);
-
-//Booking Avliability
-router.post(
-  "/booking-availbility",
-  authMiddleware,
-  bookingAvailabilityController
-);
-
-//Appointments List
-router.get("/user-appointments", authMiddleware, userAppointmentsController);
+router.get('/', userController.getAllUsers); 
+router.get('/doctors', authMiddleware, userMiddlerware('admin'), userController.getAdminUsers);
+router.get('/:id', userController.getUserById);
+router.put('/:id',  userController.updateUser);
+router.delete('/:id',  userController.deleteUser);
 
 module.exports = router;
