@@ -60,8 +60,15 @@ exports.login = async (req, res) => {
       expiresIn: '1h',
     });
 
-    // Include the _id, role name, and name in the response
-    res.json({ token, _id: user._id, role: role.name, name: user.name });
+    // Include the _id, role name, and full name in the response
+    res.json({ 
+      token, 
+      _id: user._id, 
+      role: role.name, 
+      nombre: user.nombre, 
+      apellidoP: user.apellidoP, 
+      apellidoM: user.apellidoM 
+    });
     console.log('_id of the user:', user._id);
 
   } catch (error) {

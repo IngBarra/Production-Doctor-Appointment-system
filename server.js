@@ -32,8 +32,12 @@ app.use('/roles', roleRoutes);
 // Rutas de usuarios
 const userRoutes = require('./routes/userRoutes');
 app.use('/users', userRoutes);
+
 const PacieteRoutes = require('./routes/pacienteRoutes');
 app.use('/paciente', PacieteRoutes);
+
+const NotificationRoutes = require('./routes/notificationRoutes');
+app.use('/notification', NotificationRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor en funcionamiento en el puerto ${port}`);
